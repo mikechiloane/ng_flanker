@@ -2,38 +2,32 @@ package com.faboda.ng_flanker.service;
 
 
 import com.faboda.ng_flanker.http.RequestSender;
+import com.faboda.ng_flanker.task.SenderTaskManager;
+import com.faboda.ng_flanker.task.StoppableSenderTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Service
 public class QuestionService {
 
     @Autowired
     RequestSender requestSender;
-    private final ExecutorService executorService = Executors.newFixedThreadPool(100);
 
+    @Autowired
+    SenderTaskManager senderTaskManager;
 
     public void sendRequest(String username) {
-        sendRequestEvery20Seconds(username);
+        StoppableSenderTask stoppableSenderTask = new StoppableSenderTask(requestSender, username);
+        senderTaskManager.addTask(stoppableSenderTask);
+        senderTaskManager.runTask(username);
+    }
+
+    public void stopSender(String username){
+        if(senderTaskManager.taskExist(username)){
+            senderTaskManager.stopTask(username);
+        }
     }
 
 
-    public void sendRequestEvery20Seconds(String username) {
-        executorService.submit(() -> {
-            int count = 0;
-            while (count<200) {
-                try {
-                    requestSender.sendRequest(username);
-                    Thread.sleep(10000);
-                } catch (InterruptedException | IOException e) {
-                    throw new RuntimeException(e);
-                }
-                ++count;
-            }
-        });
-    }
+
 }

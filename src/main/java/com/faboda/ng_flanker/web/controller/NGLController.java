@@ -24,4 +24,10 @@ public class NGLController {
         questionService.sendRequest(username);
         return "Request sent to " + username;
     }
+
+    @GetMapping("/stop/{username}")
+    public String stop(@PathVariable String username){
+        questionService.stopSender(username);
+        return "Flanking stopped for " + username;
+    }
 }
