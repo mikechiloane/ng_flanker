@@ -17,6 +17,7 @@ public class StoppableSenderTask implements Runnable {
 
     @Override
     public void run() {
+        this.running=true;
         while (running) {
             try {
                 requestSender.sendRequest(username);

@@ -17,9 +17,14 @@ public class QuestionService {
     SenderTaskManager senderTaskManager;
 
     public void sendRequest(String username) {
-        StoppableSenderTask stoppableSenderTask = new StoppableSenderTask(requestSender, username);
-        senderTaskManager.addTask(stoppableSenderTask);
-        senderTaskManager.runTask(username);
+        if(!senderTaskManager.taskExist(username)) {
+            StoppableSenderTask stoppableSenderTask = new StoppableSenderTask(requestSender, username);
+            senderTaskManager.addTask(stoppableSenderTask);
+            senderTaskManager.runTask(username);
+        }
+        else {
+            senderTaskManager.runTask(username);
+        }
     }
 
     public void stopSender(String username){

@@ -23,7 +23,7 @@ public class SenderTaskManager {
     }
 
     public void runTask(String username){
-        this.tasks.get(username).run();
+        executorService.submit(tasks.get(username));
     }
 
     public boolean taskExist(String username){
